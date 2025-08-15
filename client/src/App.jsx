@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable no-unused-vars */
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link2, Copy, BarChart3, ExternalLink, Loader2, Check, AlertCircle, Clock, MousePointer } from 'lucide-react';
 import axios from 'axios';
