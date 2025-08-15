@@ -1,0 +1,21 @@
+{
+  "name": "url_shortner",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "Abhishek Verma",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd functions && npm run serve",
+    "client": "cd client && npm run dev",
+    "deploy": "npm run build-client && firebase deploy",
+    "build-client": "cd client && npm run build",
+    "install-all": "npm install && concurrently \"cd functions && npm install\" \"cd client && npm install\""
+  },
+  "dependencies": {
+    "concurrently": "^9.2.0"
+  }
+}
