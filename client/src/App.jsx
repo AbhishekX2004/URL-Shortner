@@ -18,10 +18,10 @@ const App = () => {
   const [recentUrls, setRecentUrls] = useState([]);
   const [loadingRecent, setLoadingRecent] = useState(false);
 
-  // API base
+  // API
   const API = import.meta.env.VITE_API;
 
-  // ---- Timestamp helpers ----
+  // timestamp converter
   const toDate = (ts) => {
     if (!ts) return null;
 
@@ -54,9 +54,8 @@ const App = () => {
       minute: '2-digit'
     });
   };
-  // ---------------------------
 
-  // Redirect if path looks like a short code
+  // Redirect if path has a short code
   useEffect(() => {
     const path = window.location.pathname;
     const potentialShortCode = path.substring(1);

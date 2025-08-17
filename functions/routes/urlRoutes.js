@@ -6,8 +6,6 @@ const express = require("express");
 const router = express.Router();
 const admin = require("firebase-admin");
 const Redis = require("ioredis");
-
-// Initialize Firestore
 const db = admin.firestore();
 
 // Initialize Redis client
@@ -52,8 +50,6 @@ function isValidUrl(string) {
 router.post("/shorten", async (req, res) => {
   try {
     const {originalUrl} = req.body;
-
-    // Validate input
     if (!originalUrl) {
       return res.status(400).json({
         error: "Original URL is required",
@@ -112,10 +108,8 @@ router.post("/shorten", async (req, res) => {
       lastAccessed: null,
     };
 
-    // Save to Firestore
     await db.collection("urls").doc(shortCode).set(urlData);
-
-    // Cache in Redis (with 1 hour expiration)
+    // Cache in Redis - 1 hour expiration
     if (redis) {
       try {
         await Promise.all([
@@ -151,7 +145,7 @@ router.get("/url/:shortCode", async (req, res) => {
       });
     }
 
-    // Try to get from Redis cache first
+    // hit redis
     let originalUrl = null;
     if (redis) {
       try {
@@ -161,7 +155,7 @@ router.get("/url/:shortCode", async (req, res) => {
       }
     }
 
-    // If not in cache, get from Firestore
+    // hit firestore
     if (!originalUrl) {
       const urlDoc = await db.collection("urls").doc(shortCode).get();
 
@@ -174,7 +168,7 @@ router.get("/url/:shortCode", async (req, res) => {
       const urlData = urlDoc.data();
       originalUrl = urlData.originalUrl;
 
-      // Cache it in Redis for future requests
+      // store in redis
       if (redis) {
         try {
           await redis.setex(`code:${shortCode}`, 3600, originalUrl);
@@ -184,7 +178,7 @@ router.get("/url/:shortCode", async (req, res) => {
       }
     }
 
-    // Increment click count in background (don't wait)
+    // Increment click count in background
     db.collection("urls").doc(shortCode).get()
         .then((doc) => {
           if (doc.exists) {
